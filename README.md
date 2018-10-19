@@ -49,19 +49,19 @@ Key options are described below:
 
 ## Examples
 
-Baseline *survey inspired decimation* on a random $3$-SAT instance with $50,000$ variables and clause to variable ratio of $4.235$:
+Baseline *survey inspired decimation* on a random 3-SAT instance with 50,000 variables and clause to variable ratio of 4.235:
 
 ```
 ./sp -n50000 -a4.235 -k3 -%1 -t0 -d2 -s1
 ```
 
-*Survey inspired decimation* for the same problem instance:
+*Survey inspired streamlining* for the same problem instance:
 
 ```
 ./sp -n50000 -a4.235 -k3 -%1 -t90 -d2 -s1
 ```
 
-*Survey inspired decimation* for an arbitrary CSP accessed via the filepath `csp/1.cnf`:
+*Survey inspired streamlining* for an arbitrary CSP accessed via the filepath `csp/1.cnf`:
 
 ```
 ./sp -%1 -lcsp/1.cnf
