@@ -8,6 +8,9 @@
 *.tmp.lst
 *.out
 
-# Ignore all
-*
+merge
+sp
+verify
+walksat
 
+*cnf
