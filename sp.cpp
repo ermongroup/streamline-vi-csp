@@ -137,7 +137,7 @@ int main(int argc, char ** argv)
             printf("streamlining finished...decimating now\n");
             writeformula(fopen(STREAMLINE_FORMULA.c_str(),"w+"));
         }
-        
+
         fix_chunk(numInList, num_fix_per_step);
 
         if(verbose){
@@ -678,7 +678,7 @@ int parsecommandline(int argc, char **argv)
     usrand(1);
     extern char* optarg;
     while((c=getopt(argc, argv,
-                    "R:k:cN:M:r:n:m:a:s:hf:v%:e:l:dFi:Q:t:p:"))!=-1) {
+                    "R:k:cN:M:r:n:m:a:s:hf:v%:e:l:Fd:i:Q:t:p:"))!=-1) {
         switch (c) {
             case 'R':
                 rho=atof(optarg);
