@@ -1,4 +1,5 @@
 from subprocess import STDOUT, check_output, Popen, PIPE, TimeoutExpired
+import math
 import signal
 import tempfile
 import shutil
@@ -21,8 +22,8 @@ def create_env():
         shutil.copy(executable, d)
     return d
 
-def run_sat(path, timeout):
-    with Popen('./sp -%%1 -l%s' % path, shell=True, stdout=PIPE, preexec_fn=os.setsid) as process:
+def run_sat(path, timeout, streamlining_rounds=1):
+    with Popen('./sp -%%1 -t%d -l%s' % (streamlining_rounds, path), shell=True, stdout=PIPE, stderr=PIPE, preexec_fn=os.setsid) as process:
         try:
             sat_output = process.communicate(timeout=timeout)[0]
         except TimeoutExpired:
@@ -31,9 +32,11 @@ def run_sat(path, timeout):
             sat_output = process.communicate()[0]
 
     sat_output = str(sat_output)
-    return sat_output
+    is_contradiction = 'contradiction' in sat_output
+    is_sat = 'ASSIGNMENT FOUND' in sat_output
+    return is_sat, is_contradiction
 
-def run_xor_trial(num_vars, density, xor_num_vars=2, timeout=60):
+def run_xor_trial(streamlining_rounds, num_vars, density, xor_num_vars=2, timeout=60):
     d = create_env()
     output = check_output('''python graph_gen/generate_xor_cnf.py \
         --num_variables=%d \
@@ -43,12 +46,11 @@ def run_xor_trial(num_vars, density, xor_num_vars=2, timeout=60):
         ''' % (num_vars, density, xor_num_vars, d), shell=True)
 
     with cwd(d):
-        sat_output = run_sat('xor.cnf', timeout)
-        assignment_found = 'ASSIGNMENT FOUND' in sat_output
+        sat_output = run_sat('xor.cnf', timeout, streamlining_rounds=streamlining_rounds)
         shutil.rmtree(d)
-        return assignment_found
+        return sat_output
 
-def run_k_color_trial(num_nodes, edge_density, num_colors, timeout=60):
+def run_k_color_trial(streamlining_rounds, num_nodes, edge_density, num_colors, timeout=60):
     d = create_env()
     output = check_output('''python graph_gen/generate_k_coloring_cnf.py \
         --num_nodes=%d \
@@ -58,10 +60,10 @@ def run_k_color_trial(num_nodes, edge_density, num_colors, timeout=60):
         ''' % (num_nodes, edge_density, num_colors, d), shell=True)
 
     with cwd(d):
-        sat_output = run_sat('graph.cnf', timeout)
-        assignment_found = 'ASSIGNMENT FOUND' in sat_output
+        sat_output = run_sat('graph.cnf', timeout, streamlining_rounds=streamlining_rounds)
         shutil.rmtree(d)
-        return assignment_found
+        return sat_output
 
-print(run_xor_trial(num_vars=20, density=0.1, timeout=10))
-print(run_k_color_trial(num_nodes=20, edge_density=1, num_colors=5, timeout=10))
+#print(run_xor_trial(num_vars=20, density=0.1, timeout=10))
+print(run_k_color_trial(streamlining_rounds=1, num_nodes=800, edge_density=1, num_colors=5, timeout=100))
+print(run_k_color_trial(streamlining_rounds=1, num_nodes=800, edge_density=5 * math.log(5, 2), num_colors=5, timeout=100))
