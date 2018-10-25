@@ -66,6 +66,15 @@ def run_k_color_trial(streamlining_rounds, num_nodes, edge_density, num_colors, 
         return sat_output
 
 #print(run_xor_trial(num_vars=20, density=0.1, timeout=10))
-print(run_k_color_trial(streamlining_rounds=1, num_nodes=800, edge_density=1, num_colors=5, timeout=100))
+#print(run_k_color_trial(streamlining_rounds=1, num_nodes=800, edge_density=1, num_colors=5, timeout=100))
 
-print(run_k_color_trial(streamlining_rounds=1, num_nodes=800, edge_density=5 * math.log(5, 2), num_colors=5, timeout=100))
+for density in np.linspace(1, 8.07, 10):
+    print('density: %0.2f' % density)
+    streamline_results, std_results = [], []
+    for _ in range(10):
+        streamline_is_sat, _ = run_k_color_trial(streamlining_rounds=1, num_nodes=800, edge_density=density, num_colors=5, timeout=5)
+        standard_is_sat, _ = run_k_color_trial(streamlining_rounds=0, num_nodes=800, edge_density=density, num_colors=5, timeout=5)
+        streamline_results.append(streamline_is_sat)
+        std_results.append(standard_is_sat)
+
+    print('streamline/std success rates:', np.mean(streamline_results), np.mean(std_results))
