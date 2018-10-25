@@ -34,14 +34,14 @@ formula = And(*xors)
 cnf_formula = to_cnf(formula)
 
 with open(args.cnf_file_path, 'w') as f:
-    print >>f, 'p cnf %d %d' % (len(cnf_formula.free_symbols), len(cnf_formula.args))
+    print >>f, 'p cnf %d %d' % (args.num_variables, len(cnf_formula.args))
 
     for clause in cnf_formula.args:
         for variable in clause.args:
             if isinstance(variable, sympy.Symbol):
                 print >>f, variable.name,
             else:
-                print >>f, '-%s' % (variable.args[0]),
+                print >>f, '-%s' % (variable.args[0].name),
         print >>f, '0'
 
 print 'Finished writing to', args.cnf_file_path
