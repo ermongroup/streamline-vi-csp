@@ -5,6 +5,7 @@ import tempfile
 import shutil
 import os
 from contextlib import contextmanager
+import numpy as np
 
 @contextmanager
 def cwd(path):
@@ -38,7 +39,7 @@ def run_sat(path, timeout, streamlining_rounds=1):
 
 def run_xor_trial(streamlining_rounds, num_vars, density, xor_num_vars=2, timeout=60):
     d = create_env()
-    output = check_output('''python graph_gen/generate_xor_cnf.py \
+    output = check_output('''python2 graph_gen/generate_xor_cnf.py \
         --num_variables=%d \
         --xor_density=%0.2f \
         --xor_num_vars=%d \
@@ -52,7 +53,7 @@ def run_xor_trial(streamlining_rounds, num_vars, density, xor_num_vars=2, timeou
 
 def run_k_color_trial(streamlining_rounds, num_nodes, edge_density, num_colors, timeout=60):
     d = create_env()
-    output = check_output('''python graph_gen/generate_k_coloring_cnf.py \
+    output = check_output('''python2 graph_gen/generate_k_coloring_cnf.py \
         --num_nodes=%d \
         --edge_density=%0.2f \
         --num_colors=%d \
@@ -66,4 +67,5 @@ def run_k_color_trial(streamlining_rounds, num_nodes, edge_density, num_colors, 
 
 #print(run_xor_trial(num_vars=20, density=0.1, timeout=10))
 print(run_k_color_trial(streamlining_rounds=1, num_nodes=800, edge_density=1, num_colors=5, timeout=100))
+
 print(run_k_color_trial(streamlining_rounds=1, num_nodes=800, edge_density=5 * math.log(5, 2), num_colors=5, timeout=100))
