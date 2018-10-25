@@ -70,15 +70,16 @@ def run_k_color_trial(streamlining_rounds, num_nodes, edge_density, num_colors, 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('num_trials', type=int, default=100)
+    ap.add_argument('--num_trials', type=int, default=100)
+    ap.add_argument('--num_bins', type=int, default=10)
     args = ap.parse_args()
 
-    for density in np.linspace(2.5, 3.2, 10):
+    for density in np.linspace(2.5, 3.5, args.num_bins):
         print('density: %0.2f' % density)
         results_dict = collections.defaultdict(list)
         for _ in tqdm(range(args.num_trials)):
             for rounds in [0, 10, 50, 100]:
-                is_sat, is_contradiction = run_k_color_trial(streamlining_rounds=rounds, num_nodes=800, edge_density=density, num_colors=5, timeout=30)
+                is_sat, is_contradiction = run_k_color_trial(streamlining_rounds=rounds, num_nodes=800, edge_density=density, num_colors=5, timeout=60)
                 results_dict[rounds].append(is_sat)
 
         for rounds, results in sorted(results_dict.items()):
