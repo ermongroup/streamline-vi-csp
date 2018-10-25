@@ -1,4 +1,7 @@
 from subprocess import STDOUT, check_output, Popen, PIPE, TimeoutExpired
+import argparse
+from tqdm import tqdm
+import collections
 import math
 import signal
 import tempfile
@@ -65,16 +68,21 @@ def run_k_color_trial(streamlining_rounds, num_nodes, edge_density, num_colors, 
         shutil.rmtree(d)
         return sat_output
 
-#print(run_xor_trial(num_vars=20, density=0.1, timeout=10))
-#print(run_k_color_trial(streamlining_rounds=1, num_nodes=800, edge_density=1, num_colors=5, timeout=100))
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('num_trials', type=int, default=100)
+    args = ap.parse_args()
 
-for density in np.linspace(1, 8.07, 10):
-    print('density: %0.2f' % density)
-    streamline_results, std_results = [], []
-    for _ in range(10):
-        streamline_is_sat, _ = run_k_color_trial(streamlining_rounds=1, num_nodes=800, edge_density=density, num_colors=5, timeout=5)
-        standard_is_sat, _ = run_k_color_trial(streamlining_rounds=0, num_nodes=800, edge_density=density, num_colors=5, timeout=5)
-        streamline_results.append(streamline_is_sat)
-        std_results.append(standard_is_sat)
+    for density in np.linspace(2.5, 3.2, 10):
+        print('density: %0.2f' % density)
+        results_dict = collections.defaultdict(list)
+        for _ in tqdm(range(args.num_trials)):
+            for rounds in [0, 10, 50, 100]:
+                is_sat, is_contradiction = run_k_color_trial(streamlining_rounds=rounds, num_nodes=800, edge_density=density, num_colors=5, timeout=30)
+                results_dict[rounds].append(is_sat)
 
-    print('streamline/std success rates:', np.mean(streamline_results), np.mean(std_results))
+        for rounds, results in sorted(results_dict.items()):
+            print(rounds, 'constraints success rate:', np.mean(results))
+
+if __name__ == '__main__':
+    main()
