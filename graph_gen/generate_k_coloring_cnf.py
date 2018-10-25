@@ -42,7 +42,8 @@ with open(graph_txt_path, 'w') as f:
         print >>f, 'e %d %d' % (i, j)
 
 with open(args.cnf_file_path, 'w') as f:
-    cmd = [sys.executable, 'graph2cnf.py', graph_txt_path]
+    graph2cnf_path = os.path.join(os.path.dirname(__file__), 'graph2cnf.py')
+    cmd = [sys.executable, graph2cnf_path, graph_txt_path]
     sp.call(cmd, stdout=f)
 
 shutil.rmtree(directory)

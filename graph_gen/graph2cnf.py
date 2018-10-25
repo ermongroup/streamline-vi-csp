@@ -79,19 +79,3 @@ for line in open(sys.argv[1]):
         while ( c <= colors):
             print "-"+str(X[int(u)][c])+ " -" +str(X[int(v)][c])+" 0"
             c = c + 1
-    
-print "0"   
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
