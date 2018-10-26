@@ -74,14 +74,24 @@ def main():
     ap.add_argument('--num_bins', type=int, default=10)
     ap.add_argument('--timeout', type=int, default=60)
     ap.add_argument('--num_nodes', type=int, default=800)
+    ap.add_argument('--density_min', type=float, default=2.8)
+    ap.add_argument('--density_max', type=float, default=3.4)
+    ap.add_argument('problem_type', type=str)
     args = ap.parse_args()
 
-    for density in np.linspace(2.8, 3.4, args.num_bins):
+    assert args.problem_type in ('xor', 'kcolor')
+
+    for density in np.linspace(args.density_min, args.density_max, args.num_bins):
         print('density: %0.2f' % density)
         results_dict = collections.defaultdict(list)
         for _ in tqdm(range(args.num_trials)):
             for rounds in [0, 10, 50, 100]:
-                is_sat, is_contradiction = run_k_color_trial(streamlining_rounds=rounds, num_nodes=args.num_nodes, edge_density=density, num_colors=5, timeout=args.timeout)
+                if args.problem_type == 'kcolor':
+                    is_sat, is_contradiction = run_k_color_trial(streamlining_rounds=rounds, num_nodes=args.num_nodes, edge_density=density, num_colors=5, timeout=args.timeout)
+                elif args.problem_type == 'xor':
+                    is_sat, is_contradiction = run_xor_trial(streamlining_rounds=rounds, num_vars=args.num_nodes, density=density, xor_num_vars=2, timeout=args.timeout)
+                else:
+                    assert False, args.problem_type
                 results_dict[rounds].append(is_sat)
 
         for rounds, results in sorted(results_dict.items()):
