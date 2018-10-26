@@ -85,7 +85,7 @@ def main():
         print('density: %0.2f' % density)
         results_dict = collections.defaultdict(list)
         for _ in tqdm(range(args.num_trials)):
-            for rounds in [0, 10, 50, 100]:
+            for rounds in [0, 50, 100]:
                 if args.problem_type == 'kcolor':
                     is_sat, is_contradiction = run_k_color_trial(streamlining_rounds=rounds, num_nodes=args.num_nodes, edge_density=density, num_colors=5, timeout=args.timeout)
                 elif args.problem_type == 'xor':
