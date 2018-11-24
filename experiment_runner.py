@@ -69,7 +69,7 @@ def main():
         print('density: %0.2f' % density)
         results_dict = collections.defaultdict(list)
         for _ in tqdm(range(args.num_trials)):
-            for rounds in [0, 10, 50, 100]:
+            for rounds in [0, 50, 100]:
                 is_sat, is_contradiction = run_xor_trial(streamlining_rounds=rounds, num_vars=args.num_nodes, density=density, xor_num_vars=2, timeout=args.timeout)
                 results_dict[rounds].append(is_sat)
 
