@@ -42,7 +42,7 @@ def run_sat(path, timeout, streamlining_rounds=1):
 
 def run_xor_trial(streamlining_rounds, num_vars, density, xor_num_vars=2, timeout=60):
     d = create_env()
-    output = check_output('''python2 graph_gen/generate_xor_cnf.py \
+    output = check_output('''python2 generate_xor_cnf.py \
         --num_variables=%d \
         --xor_density=%0.2f \
         --xor_num_vars=%d \
@@ -54,20 +54,6 @@ def run_xor_trial(streamlining_rounds, num_vars, density, xor_num_vars=2, timeou
         shutil.rmtree(d)
         return sat_output
 
-def run_k_color_trial(streamlining_rounds, num_nodes, edge_density, num_colors, timeout=60):
-    d = create_env()
-    output = check_output('''python2 graph_gen/generate_k_coloring_cnf.py \
-        --num_nodes=%d \
-        --edge_density=%0.2f \
-        --num_colors=%d \
-        --cnf_file_path=%s/graph.cnf \
-        ''' % (num_nodes, edge_density, num_colors, d), shell=True)
-
-    with cwd(d):
-        sat_output = run_sat('graph.cnf', timeout, streamlining_rounds=streamlining_rounds)
-        shutil.rmtree(d)
-        return sat_output
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--num_trials', type=int, default=100)
@@ -76,22 +62,15 @@ def main():
     ap.add_argument('--num_nodes', type=int, default=800)
     ap.add_argument('--density_min', type=float, default=2.8)
     ap.add_argument('--density_max', type=float, default=3.4)
-    ap.add_argument('problem_type', type=str)
     args = ap.parse_args()
 
-    assert args.problem_type in ('xor', 'kcolor')
 
     for density in np.linspace(args.density_min, args.density_max, args.num_bins):
         print('density: %0.2f' % density)
         results_dict = collections.defaultdict(list)
         for _ in tqdm(range(args.num_trials)):
             for rounds in [0, 10, 50, 100]:
-                if args.problem_type == 'kcolor':
-                    is_sat, is_contradiction = run_k_color_trial(streamlining_rounds=rounds, num_nodes=args.num_nodes, edge_density=density, num_colors=5, timeout=args.timeout)
-                elif args.problem_type == 'xor':
-                    is_sat, is_contradiction = run_xor_trial(streamlining_rounds=rounds, num_vars=args.num_nodes, density=density, xor_num_vars=2, timeout=args.timeout)
-                else:
-                    assert False, args.problem_type
+                is_sat, is_contradiction = run_xor_trial(streamlining_rounds=rounds, num_vars=args.num_nodes, density=density, xor_num_vars=2, timeout=args.timeout)
                 results_dict[rounds].append(is_sat)
 
         for rounds, results in sorted(results_dict.items()):

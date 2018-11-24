@@ -1,7 +1,0 @@
-#!/bin/bash
-
-# call riss from the directory where this script is located
-SOLVERDIR="$(dirname "${BASH_SOURCE[0]}" )"
-
-# call solver without the DRAT flag
-"$SOLVERDIR"/SparrowToRiss.sh "$1" 0 "$2"

@@ -64,7 +64,7 @@ Baseline *survey inspired decimation* on a random 3-SAT instance with 50,000 var
 *Survey inspired streamlining* for an arbitrary CSP accessed via the filepath `csp/1.cnf`:
 
 ```
-./sp -%1 -lcsp/1.cnf
+./sp -%1 -lcsp/1.cnf -t80
 ```
 
 
