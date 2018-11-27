@@ -6,8 +6,8 @@ This repository provides a reference implementation for solving constraint satis
 
 > Streamlining Variational Inference for Constraint Satisfaction Problems  
 Aditya Grover, Tudor Achim, Stefano Ermon  
-Advances in Neural Information Processing Systems (NIPS), 2018  
-Paper: arXiv link TODO
+Advances in Neural Information Processing Systems (NeurIPS), 2018  
+Paper: http://arxiv.org/abs/1811.09813
 
 ## General
 
